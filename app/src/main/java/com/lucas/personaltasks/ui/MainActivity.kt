@@ -1,12 +1,19 @@
 package com.lucas.personaltasks.ui
 
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.ArrayAdapter
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.lucas.personaltasks.R
 import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
 import com.lucas.personaltasks.model.Task
+import com.lucas.personaltasks.ui.Constant.EXTRA_TASK
 
 class MainActivity : AppCompatActivity() {
     // Inicia ActivityMainBinding
@@ -22,29 +29,65 @@ class MainActivity : AppCompatActivity() {
     // Lista de tasks
     private val taskList: MutableList<Task> = mutableListOf()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(amb.root)
+    private lateinit var carl: ActivityResultLauncher<Intent>
 
-
-        // Configura e preenche Lista de task
-        amb.taskLv.adapter = ArrayAdapter(
+    private val taskAdapter: ArrayAdapter<Task> by lazy {
+        ArrayAdapter(
             this,
             android.R.layout.simple_list_item_1,
             taskList
         )
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(amb.root)
+        setSupportActionBar(amb.toolbarIn.toolbar)
+        supportActionBar?.subtitle = "Task List"
+
+        carl = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result ->
+            if (result.resultCode == RESULT_OK) {
+                val task = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    result.data?.getParcelableExtra(EXTRA_TASK, Task::class.java)
+                } else {
+                    result.data?.getParcelableExtra<Task>(EXTRA_TASK)
+                }
+                task?.let {
+                    mainController.createTask(it)
+                    taskList.add(it)
+                    taskAdapter.notifyDataSetChanged()
+                }
+            }
+        }
+
+        // Configura e preenche Lista de task
+        amb.taskLv.adapter = taskAdapter
         fillTaskList()
     }
 
-    private fun createTask() {
-        var task = Task(title = "task1", description = "description1")
-        mainController.createTask(task)
+    private fun fillTaskList() {
+        Thread {
+            val tasks = mainController.getTasks()
+            runOnUiThread {
+                taskList.clear()
+                taskList.addAll(tasks)
+                taskAdapter.notifyDataSetChanged()
+            }
+        }.start()
     }
 
-    private fun fillTaskList() {
-        taskList.clear()
-        Thread {
-            taskList.addAll(mainController.getTasks())
-        }.start()
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.add_task_mi -> {
+                carl.launch(Intent(this, TaskActivity::class.java))
+                true
+            } else -> { false }
+        }
     }
 }
