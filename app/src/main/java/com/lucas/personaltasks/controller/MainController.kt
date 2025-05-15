@@ -1,7 +1,7 @@
 package com.lucas.personaltasks.controller
 
 import androidx.room.Room
-import com.lucas.personaltasks.MainActivity
+import com.lucas.personaltasks.ui.MainActivity
 import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.TaskDao
 import com.lucas.personaltasks.model.TaskRoomDb
