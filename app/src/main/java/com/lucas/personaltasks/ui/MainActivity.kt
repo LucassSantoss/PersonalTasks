@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.lucas.personaltasks.R
+import com.lucas.personaltasks.adapter.TaskAdapter
 import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
 import com.lucas.personaltasks.model.Task
@@ -31,12 +32,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var carl: ActivityResultLauncher<Intent>
 
-    private val taskAdapter: ArrayAdapter<Task> by lazy {
-        ArrayAdapter(
-            this,
-            android.R.layout.simple_list_item_1,
-            taskList
-        )
+    private val taskAdapter: TaskAdapter by lazy {
+        TaskAdapter(this, taskList)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
