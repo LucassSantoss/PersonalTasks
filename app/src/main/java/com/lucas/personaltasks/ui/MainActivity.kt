@@ -131,4 +131,12 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
             carl.launch(this)
         }
     }
+
+    override fun onDetailTaskMenuItemClick(position: Int) {
+        Intent(this, TaskActivity::class.java).apply {
+            putExtra(EXTRA_TASK, taskList[position])
+            putExtra(EXTRA_VIEW_TASK, true)
+            startActivity(this)
+        }
+    }
 }

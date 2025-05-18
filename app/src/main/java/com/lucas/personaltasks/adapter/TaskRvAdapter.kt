@@ -38,6 +38,11 @@ class TaskRvAdapter(
                     onTaskClickListener.onRemoveTaskMenuItemClick(adapterPosition)
                     true
                 }
+
+                menu.findItem(R.id.detail_task_mi).setOnMenuItemClickListener {
+                    onTaskClickListener.onDetailTaskMenuItemClick(adapterPosition)
+                    true
+                }
             }
 
             ttb.root.setOnClickListener {

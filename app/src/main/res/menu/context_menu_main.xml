@@ -9,4 +9,9 @@
         android:id="@+id/edit_task_mi"
         android:title="@string/edit_task"
     />
+
+    <item
+        android:id="@+id/detail_task_mi"
+        android:title="@string/detail_task"
+    />
 </menu>
