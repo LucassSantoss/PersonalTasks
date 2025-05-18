@@ -16,8 +16,25 @@ class MainController(mainActivity: MainActivity) {
             taskDao.createTask(task)
         }.start()
     }
-    fun getTask(id: Int) = taskDao.getTask(id)
+
+    fun getTask(id: Int) {
+        Thread {
+            taskDao.getTask(id)
+        }.start()
+    }
+
     fun getTasks() = taskDao.getTasks()
-    fun updateTask(task: Task) = taskDao.updateTask(task)
-    fun removeTask(task: Task) = taskDao.deleteTask(task)
+
+
+    fun updateTask(task: Task) {
+        Thread {
+            taskDao.updateTask(task)
+        }.start()
+    }
+
+    fun removeTask(task: Task) {
+        Thread {
+            taskDao.deleteTask(task)
+        }.start()
+    }
 }

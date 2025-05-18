@@ -7,4 +7,6 @@
     <string name="save">Save</string>
     <string name="add_task">Add task</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_task">Edit task</string>
+    <string name="remove_task">Remove task</string>
 </resources>

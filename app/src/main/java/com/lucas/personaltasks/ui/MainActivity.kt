@@ -3,9 +3,11 @@ package com.lucas.personaltasks.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ArrayAdapter
+import android.view.View
+import android.widget.AdapterView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,7 +17,8 @@ import com.lucas.personaltasks.adapter.TaskAdapter
 import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
 import com.lucas.personaltasks.model.Task
-import com.lucas.personaltasks.ui.Constant.EXTRA_TASK
+import com.lucas.personaltasks.model.Constant.EXTRA_TASK
+import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
 
 class MainActivity : AppCompatActivity() {
     // Inicia ActivityMainBinding
@@ -51,9 +54,16 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     result.data?.getParcelableExtra<Task>(EXTRA_TASK)
                 }
-                task?.let {
-                    mainController.createTask(it)
-                    taskList.add(it)
+
+                task?.let { receivedTask ->
+                    val position = taskList.indexOfFirst { it.id == receivedTask.id }
+                    if (position == -1) {
+                        mainController.createTask(receivedTask)
+                        taskList.add(receivedTask)
+                    } else {
+                        mainController.updateTask(receivedTask)
+                        taskList[position] = receivedTask
+                    }
                     taskAdapter.notifyDataSetChanged()
                 }
             } else if (result.resultCode == RESULT_CANCELED) {
@@ -64,6 +74,16 @@ class MainActivity : AppCompatActivity() {
         // Configura e preenche Lista de task
         amb.taskLv.adapter = taskAdapter
         fillTaskList()
+
+        registerForContextMenu(amb.taskLv)
+        amb.taskLv.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                Intent(this@MainActivity, TaskActivity::class.java).apply {
+                    putExtra(EXTRA_TASK, taskList[position])
+                    putExtra(EXTRA_VIEW_TASK, true)
+                    startActivity(this)
+                }
+            }
     }
 
     private fun fillTaskList() {
@@ -89,5 +109,39 @@ class MainActivity : AppCompatActivity() {
                 true
             } else -> { false }
         }
+    }
+
+    override fun onCreateContextMenu(
+        menu: ContextMenu?,
+        v: View?,
+        menuInfo: ContextMenu.ContextMenuInfo?
+    ) {
+        menuInflater.inflate(R.menu.context_menu_main, menu)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position
+        return when(item.itemId) {
+            R.id.remove_task_mi -> {
+                val taskToRemove = taskList[position]
+                mainController.removeTask(taskToRemove)
+                taskList.removeAt(position)
+                taskAdapter.notifyDataSetChanged()
+                Toast.makeText(this, "Task removed", Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.edit_task_mi -> {
+                Intent(this, TaskActivity::class.java).apply {
+                    putExtra(EXTRA_TASK, taskList[position])
+                    carl.launch(this)
+                }
+                true
+            } else -> { false }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterForContextMenu(amb.taskLv)
     }
 }
