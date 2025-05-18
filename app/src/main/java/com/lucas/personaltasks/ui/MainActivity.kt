@@ -12,15 +12,17 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.lucas.personaltasks.R
 import com.lucas.personaltasks.adapter.TaskAdapter
+import com.lucas.personaltasks.adapter.TaskRvAdapter
 import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
 import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK
 import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnTaskClickListener{
     // Inicia ActivityMainBinding
     private val amb: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
@@ -36,8 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var carl: ActivityResultLauncher<Intent>
 
-    private val taskAdapter: TaskAdapter by lazy {
-        TaskAdapter(this, taskList)
+    private val taskAdapter: TaskRvAdapter by lazy {
+        TaskRvAdapter(this, taskList)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,30 +62,22 @@ class MainActivity : AppCompatActivity() {
                     if (position == -1) {
                         mainController.createTask(receivedTask)
                         taskList.add(receivedTask)
+                        taskAdapter.notifyItemInserted(taskList.lastIndex)
                     } else {
                         mainController.updateTask(receivedTask)
                         taskList[position] = receivedTask
+                        taskAdapter.notifyItemChanged(position)
                     }
-                    taskAdapter.notifyDataSetChanged()
                 }
             } else if (result.resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
             }
         }
-
         // Configura e preenche Lista de task
-        amb.taskLv.adapter = taskAdapter
         fillTaskList()
 
-        registerForContextMenu(amb.taskLv)
-        amb.taskLv.onItemClickListener =
-            AdapterView.OnItemClickListener { parent, view, position, id ->
-                Intent(this@MainActivity, TaskActivity::class.java).apply {
-                    putExtra(EXTRA_TASK, taskList[position])
-                    putExtra(EXTRA_VIEW_TASK, true)
-                    startActivity(this)
-                }
-            }
+        amb.taskRv.adapter = taskAdapter
+        amb.taskRv.layoutManager = LinearLayoutManager(this)
     }
 
     private fun fillTaskList() {
@@ -111,37 +105,31 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onCreateContextMenu(
-        menu: ContextMenu?,
-        v: View?,
-        menuInfo: ContextMenu.ContextMenuInfo?
-    ) {
-        menuInflater.inflate(R.menu.context_menu_main, menu)
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean {
-        val position = (item.menuInfo as AdapterView.AdapterContextMenuInfo).position
-        return when(item.itemId) {
-            R.id.remove_task_mi -> {
-                val taskToRemove = taskList[position]
-                mainController.removeTask(taskToRemove)
-                taskList.removeAt(position)
-                taskAdapter.notifyDataSetChanged()
-                Toast.makeText(this, "Task removed", Toast.LENGTH_SHORT).show()
-                true
-            }
-            R.id.edit_task_mi -> {
-                Intent(this, TaskActivity::class.java).apply {
-                    putExtra(EXTRA_TASK, taskList[position])
-                    carl.launch(this)
-                }
-                true
-            } else -> { false }
+    override fun onTaskClick(position: Int) {
+        Intent(this, TaskActivity::class.java).apply {
+            putExtra(EXTRA_TASK, taskList[position])
+            putExtra(EXTRA_VIEW_TASK, true)
+            startActivity(this)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        unregisterForContextMenu(amb.taskLv)
+    override fun onRemoveTaskMenuItemClick(position: Int) {
+        val task = taskList[position]
+        taskList.removeAt(position)
+        mainController.removeTask(task)
+        taskAdapter.notifyItemRemoved(position)
+        Toast.makeText(this, "Contact Removed!", Toast.LENGTH_SHORT).show()
+
+    }
+
+    override fun onEditTaskMenuItemClick(position: Int) {
+        Intent(this, TaskActivity::class.java).apply {
+            putExtra(EXTRA_TASK, taskList[position])
+            carl.launch(this)
+        }
     }
 }
