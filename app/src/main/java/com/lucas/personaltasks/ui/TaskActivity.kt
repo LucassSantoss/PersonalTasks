@@ -18,8 +18,6 @@ class TaskActivity: AppCompatActivity() {
         ActivityTaskBinding.inflate(layoutInflater)
     }
 
-    private var selectedDateTimeMillis: Long = System.currentTimeMillis()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(acb.root)
@@ -40,8 +38,15 @@ class TaskActivity: AppCompatActivity() {
             with(acb) {
                 titleEd.setText(it.title)
                 descriptionEd.setText(it.description)
-                val limitDate = Date(it.limitDateMillis)
-                datepicker.updateDate(limitDate.year, limitDate.month, limitDate.day)
+
+                val cal = Calendar.getInstance().apply {
+                    timeInMillis = it.limitDateMillis
+                }
+                datepicker.updateDate(
+                    cal.get(Calendar.YEAR),
+                    cal.get(Calendar.MONTH),
+                    cal.get(Calendar.DAY_OF_MONTH)
+                )
 
                 val viewTask = intent.getBooleanExtra(EXTRA_VIEW_TASK, false)
                 if (viewTask) {
