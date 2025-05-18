@@ -45,7 +45,7 @@ class TaskAdapter(
         viewHolder.titleTv.text = task.title
         val description: String = task.description.ifEmpty { "empty" }
         viewHolder.descriptionTv.text = description
-        val fmt = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())
+        val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         viewHolder.datetime_tv.text = fmt.format(Date(task.limitDateMillis))
 
         return taskTileView as View
