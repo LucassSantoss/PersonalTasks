@@ -14,7 +14,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lucas.personaltasks.R
-import com.lucas.personaltasks.adapter.TaskAdapter
 import com.lucas.personaltasks.adapter.TaskRvAdapter
 import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
