@@ -22,11 +22,14 @@ class TaskActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(acb.root)
 
+        // Vincula com a toolbar criada
         setSupportActionBar(acb.toolbarIn.toolbar)
         supportActionBar?.subtitle = "New task"
 
+        // Atualiza o DatePicker com a data atual
         updateDateTimeText()
 
+        // Recebe a task passada pela Intent da MainActivity
         val receivedTask = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra(EXTRA_TASK, Task::class.java)
         } else {
@@ -35,6 +38,7 @@ class TaskActivity: AppCompatActivity() {
 
         receivedTask?.let {
             supportActionBar?.subtitle = "Edit contact"
+            // Preenche elementos visuais para edição e/ou visualização
             with(acb) {
                 titleEd.setText(it.title)
                 descriptionEd.setText(it.description)
@@ -49,6 +53,7 @@ class TaskActivity: AppCompatActivity() {
                 )
 
                 val viewTask = intent.getBooleanExtra(EXTRA_VIEW_TASK, false)
+                // Se for apenas visualização, desativa os elementos da tela
                 if (viewTask) {
                     supportActionBar?.subtitle = "View task"
                     titleEd.isEnabled = false
@@ -60,6 +65,7 @@ class TaskActivity: AppCompatActivity() {
         }
 
         with(acb) {
+            // Configura botão de salvar e de cancelar
             saveBtn.setOnClickListener {
                 val year: Int = datepicker.year
                 val month: Int = datepicker.month
@@ -69,6 +75,7 @@ class TaskActivity: AppCompatActivity() {
                 calendar.set(year, month, day)
                 val dateMillis = calendar.timeInMillis
 
+                // Cria uma nova task ao clicar em salvar, e envia pela Intent
                 Task (
                     receivedTask?.id?:hashCode(),
                     title = titleEd.text.toString(),
@@ -83,6 +90,7 @@ class TaskActivity: AppCompatActivity() {
                 finish()
             }
 
+            // Finaliza a Intent com um resultado cancelado
             cancelButton.setOnClickListener {
                 Intent().apply {
                     setResult(RESULT_CANCELED)
