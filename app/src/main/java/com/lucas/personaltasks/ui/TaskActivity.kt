@@ -97,7 +97,6 @@ class TaskActivity: AppCompatActivity() {
                 }
                 finish()
             }
-
         }
     }
 

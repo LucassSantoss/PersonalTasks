@@ -133,7 +133,7 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
         taskList.removeAt(position)
         mainController.removeTask(task)
         taskAdapter.notifyItemRemoved(position)
-        Toast.makeText(this, "Contact Removed!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Task Removed!", Toast.LENGTH_SHORT).show()
     }
 
     override fun onEditTaskMenuItemClick(position: Int) {
