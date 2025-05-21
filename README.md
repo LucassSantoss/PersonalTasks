@@ -10,4 +10,5 @@ Esse é um aplicativo de lista de atividades, no qual podemos registrar uma ativ
 O aplicativo mostrará as atividades em uma lista na tela principal, podendo também, visualizar as atividades de forma separada
 
 ## Como utilizar ?
-Esse aplicativo possui compatibilidade mínima com Android 8.0 (API 26)
+* Esse aplicativo possui compatibilidade mínima com Android 8.0 (API 26)
+* Exemplo de uso em vídeo: https://youtu.be/nyXGzMS5d1Q
