@@ -24,6 +24,7 @@ class TaskRvAdapter(
         val titleEd: TextView = ttb.titleTv
         val descriptionEd: TextView = ttb.descriptionTv
         val date: TextView = ttb.datetimeTv
+        val finished: TextView = ttb.finishedTv
 
         init {
             // Configura menu de contexto
@@ -82,6 +83,7 @@ class TaskRvAdapter(
                 }
                 descriptionEd.text = description
                 date.text = fmt.format(Date(task.limitDateMillis))
+                finished.text = "Finished: " + task.finished.toString()
             }
         }
     }

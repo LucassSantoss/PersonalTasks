@@ -15,7 +15,8 @@ data class Task(
     @PrimaryKey(autoGenerate = true) var id: Int? = null,
     var title: String = "",
     var description: String = "",
-    var limitDateMillis: Long = System.currentTimeMillis()
+    var limitDateMillis: Long = System.currentTimeMillis(),
+    var finished: Boolean
 ): Parcelable {
     override fun toString(): String {
         val fmt = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())

@@ -10,4 +10,5 @@
     <string name="edit_task">Edit task</string>
     <string name="remove_task">Remove task</string>
     <string name="detail_task">Detail task</string>
+    <string name="finished">Finished</string>
 </resources>

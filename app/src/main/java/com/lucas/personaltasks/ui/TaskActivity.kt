@@ -42,6 +42,7 @@ class TaskActivity: AppCompatActivity() {
             with(acb) {
                 titleEd.setText(it.title)
                 descriptionEd.setText(it.description)
+                finishedCb.isChecked = it.finished
 
                 val cal = Calendar.getInstance().apply {
                     timeInMillis = it.limitDateMillis
@@ -59,6 +60,7 @@ class TaskActivity: AppCompatActivity() {
                     titleEd.isEnabled = false
                     descriptionEd.isEnabled = false
                     datepicker.isEnabled = false
+                    finishedCb.isEnabled = false
                     saveBtn.visibility = View.GONE
                 }
             }
@@ -80,7 +82,8 @@ class TaskActivity: AppCompatActivity() {
                     receivedTask?.id?:hashCode(),
                     title = titleEd.text.toString(),
                     description = descriptionEd.text.toString(),
-                    limitDateMillis = dateMillis
+                    limitDateMillis = dateMillis,
+                    finished = finishedCb.isChecked
                 ).let { task ->
                     Intent().apply {
                         putExtra(EXTRA_TASK, task)
