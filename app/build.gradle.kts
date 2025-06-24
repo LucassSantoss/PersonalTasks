@@ -57,4 +57,5 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.kotlinx.coroutines.android)
 }

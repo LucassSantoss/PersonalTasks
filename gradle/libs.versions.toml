@@ -14,6 +14,7 @@ kspVersion = "2.1.20-2.0.1"
 roomVersion = "2.7.1"
 googleServices = "4.4.2"
 firebaseVersion = "33.14.0"
+coroutinesVersion = "1.10.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +31,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseVersion" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutinesVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
