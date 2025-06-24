@@ -12,11 +12,11 @@ import java.util.Locale
 @Parcelize
 @Entity
 data class Task(
-    @PrimaryKey(autoGenerate = true) var id: Int? = null,
+    @PrimaryKey(autoGenerate = true) var id: Int? = -1,
     var title: String = "",
     var description: String = "",
     var limitDateMillis: Long = System.currentTimeMillis(),
-    var finished: Boolean
+    var finished: Boolean = false
 ): Parcelable {
     override fun toString(): String {
         val fmt = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())

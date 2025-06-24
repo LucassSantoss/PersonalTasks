@@ -3,6 +3,9 @@ package com.lucas.personaltasks.ui
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -16,6 +19,7 @@ import com.lucas.personaltasks.controller.MainController
 import com.lucas.personaltasks.databinding.ActivityMainBinding
 import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK
+import com.lucas.personaltasks.model.Constant.EXTRA_TASK_ARRAY
 import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
 
 class MainActivity : AppCompatActivity(), OnTaskClickListener{
@@ -33,6 +37,36 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
 
     private val taskAdapter: TaskRvAdapter by lazy {
         TaskRvAdapter(this, taskList)
+    }
+
+    companion object {
+        const val GET_TASKS_MESSAGE = 1
+        const val GET_TASKS_INTERVAL = 2000L
+    }
+
+    val getTasksHandler = object: Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            if (msg.what == GET_TASKS_MESSAGE) {
+                mainController.getTasks()
+                sendMessageDelayed(
+                    obtainMessage().apply {
+                        what = GET_TASKS_MESSAGE
+                    }, GET_TASKS_INTERVAL
+                )
+            } else {
+                val taskArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    msg.data?.getParcelableArray(EXTRA_TASK_ARRAY, Task::class.java)
+                } else {
+                    msg.data?.getParcelableArray(EXTRA_TASK_ARRAY)
+                }
+                taskList.clear()
+                taskArray?.forEach {
+                    taskList.addAll(listOf(it as Task))
+                }
+                taskAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,23 +107,16 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
                 Toast.makeText(this, "Canceled", Toast.LENGTH_SHORT).show()
             }
         }
-        // Preenche Lista de task
-        fillTaskList()
 
         // Configura lista de Tasks (RecycleView)
         amb.taskRv.adapter = taskAdapter
         amb.taskRv.layoutManager = LinearLayoutManager(this)
-    }
 
-    private fun fillTaskList() {
-        Thread {
-            val tasks = mainController.getTasks()
-            runOnUiThread {
-                taskList.clear()
-                taskList.addAll(tasks)
-                taskAdapter.notifyDataSetChanged()
-            }
-        }.start()
+        getTasksHandler.sendMessageDelayed(
+            Message().apply {
+                what = GET_TASKS_MESSAGE
+            }, GET_TASKS_INTERVAL
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -106,10 +133,6 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
                 true
             } else -> { false }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     override fun onTaskClick(position: Int) {
