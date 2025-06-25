@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/reactivate_task_mi"
+        android:title="@string/reactivate"
+    />
+
+    <item
+        android:id="@+id/detail_task_mi"
+        android:title="@string/detail_task"
+    />
+
+</menu>

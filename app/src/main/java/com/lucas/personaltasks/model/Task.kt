@@ -16,7 +16,8 @@ data class Task(
     var title: String = "",
     var description: String = "",
     var limitDateMillis: Long = System.currentTimeMillis(),
-    var finished: Boolean = false
+    var finished: Boolean = false,
+    var status: TaskStatus = TaskStatus.OPEN
 ): Parcelable {
     override fun toString(): String {
         val fmt = SimpleDateFormat("dd/MM/yyyy 'às' HH:mm", Locale.getDefault())

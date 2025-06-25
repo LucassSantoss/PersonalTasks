@@ -8,6 +8,7 @@ import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.TaskDao
 import com.lucas.personaltasks.model.TaskFirebaseDatabase
 import com.lucas.personaltasks.model.TaskRoomDb
+import com.lucas.personaltasks.model.TaskStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,8 +36,9 @@ class MainController(private val mainActivity: MainActivity) {
     fun getTasks() {
         databaseCoroutineScope.launch {
             val taskList = taskDao.getTasks()
+            val tasks = taskList.filter { it.status == TaskStatus.OPEN }
             mainActivity.getTasksHandler.sendMessage(Message().apply {
-                data.putParcelableArray(EXTRA_TASK_ARRAY, taskList.toTypedArray())
+                data.putParcelableArray(EXTRA_TASK_ARRAY, tasks.toTypedArray())
             })
         }
     }
@@ -49,7 +51,8 @@ class MainController(private val mainActivity: MainActivity) {
 
     fun removeTask(task: Task) {
         databaseCoroutineScope.launch {
-            taskDao.deleteTask(task)
+            task.status = TaskStatus.DELETED
+            taskDao.updateTask(task)
         }
     }
 }

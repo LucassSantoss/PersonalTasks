@@ -23,6 +23,7 @@ import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK_ARRAY
 import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
+import com.lucas.personaltasks.model.TaskStatus
 
 class MainActivity : AppCompatActivity(), OnTaskClickListener{
     private val amb: ActivityMainBinding by lazy {
@@ -137,6 +138,10 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
             R.id.sign_out_mi -> {
                 Firebase.auth.signOut()
                 finish()
+                true
+            }
+            R.id.history_mi -> {
+                startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
             else -> { false }

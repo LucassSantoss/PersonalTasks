@@ -17,4 +17,6 @@
     <string name="sign_up">Sign up</string>
     <string name="reset_password">Reset password</string>
     <string name="sign_out">Sign out</string>
+    <string name="reactivate">Reactivate</string>
+    <string name="home">Home</string>
 </resources>
