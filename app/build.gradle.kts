@@ -58,4 +58,8 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.database.ktx)
     implementation(libs.kotlinx.coroutines.android)
+
+    // Firebase Ui AuthAdd commentMore actions
+    implementation(libs.firebase.ui.auth)
+    implementation(libs.firebase.auth)
 }
