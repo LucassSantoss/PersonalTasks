@@ -5,6 +5,11 @@
         android:id="@+id/add_task_mi"
         android:title="@string/add_task"
         android:icon="@drawable/ic_add"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom"
+    />
+    <item
+        android:id="@+id/sign_out_mi"
+        android:title="@string/sign_out"
+        app:showAsAction="never"
     />
 </menu>

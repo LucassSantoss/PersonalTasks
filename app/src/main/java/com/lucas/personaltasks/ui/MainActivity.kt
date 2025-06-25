@@ -13,6 +13,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lucas.personaltasks.R
 import com.lucas.personaltasks.adapter.TaskRvAdapter
 import com.lucas.personaltasks.controller.MainController
@@ -131,7 +133,13 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
                 // Quando clicamos no botão de adicionar uma task
                 carl.launch(Intent(this, TaskActivity::class.java))
                 true
-            } else -> { false }
+            }
+            R.id.sign_out_mi -> {
+                Firebase.auth.signOut()
+                finish()
+                true
+            }
+            else -> { false }
         }
     }
 
@@ -172,5 +180,10 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
             putExtra(EXTRA_VIEW_TASK, true)
             startActivity(this)
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (Firebase.auth.currentUser == null) finish()
     }
 }
