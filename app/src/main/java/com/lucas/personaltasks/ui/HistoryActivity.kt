@@ -38,26 +38,33 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
         HistoryController(this)
     }
 
+    // Adaptador do RecyclerView utilizado na tela de histórico
     private val taskAdapter: HistoryTaskRvAdapter by lazy {
         HistoryTaskRvAdapter(this, taskList)
     }
 
     companion object {
+        // Variáveis estáticas usadas para controlar a atualização da lista de tasks
         const val GET_TASKS_MESSAGE = 1
         const val GET_TASKS_INTERVAL = 2000L
     }
 
+    // instância de uma classe anônima que estende a classe Handler
     val getTasksHandler = object: Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
+            // Executado se a mensagem tiver o valor de GET_TASKS_MESSAGE
             if (msg.what == MainActivity.GET_TASKS_MESSAGE) {
                 historyController.getHistoryTasks()
+                // Reenvia mensagem com o mesmo código, para que continue atualizando as tasks
                 sendMessageDelayed(
                     obtainMessage().apply {
                         what = MainActivity.GET_TASKS_MESSAGE
                     }, MainActivity.GET_TASKS_INTERVAL
                 )
             } else {
+                // Trata o caso em que as tasks são recebidas após a chamada do historyController
+                // Limpa a lista atual e adiciona as tasks novamente
                 val taskArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     msg.data?.getParcelableArray(EXTRA_TASK_ARRAY, Task::class.java)
                 } else {
@@ -75,12 +82,16 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(ahb.root)
+
+        // Configura toolbar
         setSupportActionBar(ahb.toolbarIn.toolbar)
         supportActionBar?.title = "History"
 
+        // Configura RecyclerView
         ahb.taskRv.adapter = taskAdapter
         ahb.taskRv.layoutManager = LinearLayoutManager(this)
 
+        // Envia primeira mensagem para atualizar as tasks
         getTasksHandler.sendMessageDelayed(
             Message().apply {
                 what = GET_TASKS_MESSAGE
@@ -88,6 +99,9 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
         )
     }
 
+    // Função ativada ao clicar em reativar uma task
+    // Remove da lista de histórico e troca o status por meio do historyController
+    // A task voltará para a página inicial
     override fun onReactivateTaskMenuItemClick(position: Int) {
         val task = taskList[position]
         taskList.removeAt(position)
@@ -96,6 +110,8 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
         Toast.makeText(this@HistoryActivity, "Task reactivated", Toast.LENGTH_SHORT).show()
     }
 
+    // Função ativada ao clicar em detalhar uma task
+    // Abre uma tela TaskActivity com a task selecionada para visualização
     override fun onDetailTaskMenuItemClick(position: Int) {
         Intent(this, TaskActivity::class.java).apply {
             putExtra(EXTRA_TASK, taskList[position])
@@ -104,6 +120,7 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
         }
     }
 
+    // Infla o menu de opções
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_history, menu)
         return true
@@ -111,6 +128,7 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            // Configura botão de voltar para fechar essa tela de histórico
             R.id.home_mi -> {
                 finish()
                 true
@@ -121,6 +139,7 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
 
     override fun onStart() {
         super.onStart()
+        // Verifica se o usuário está logado
         if (Firebase.auth.currentUser == null) finish()
     }
 }

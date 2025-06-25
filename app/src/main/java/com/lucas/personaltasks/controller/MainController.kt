@@ -21,10 +21,12 @@ class MainController(private val mainActivity: MainActivity) {
     ).build().taskDao()
      */
 
+    // Instancia o taskDao utilizando o FirebaseDatabase
     private val taskDao: TaskDao = TaskFirebaseDatabase()
     private val databaseCoroutineScope = CoroutineScope(Dispatchers.IO)
 
-    // Implementa funções que chamam o Dao utilizando Threads
+    // Chama funções do DAO utilizando coroutine
+
     fun createTask(task: Task) {
         databaseCoroutineScope.launch {
             taskDao.createTask(task)
@@ -36,7 +38,9 @@ class MainController(private val mainActivity: MainActivity) {
     fun getTasks() {
         databaseCoroutineScope.launch {
             val taskList = taskDao.getTasks()
+            // Filtra apenas as tasks que não foram deletadas
             val tasks = taskList.filter { it.status == TaskStatus.OPEN }
+            // Envia mensagem para a mainActivity com o resultado das tasks
             mainActivity.getTasksHandler.sendMessage(Message().apply {
                 data.putParcelableArray(EXTRA_TASK_ARRAY, tasks.toTypedArray())
             })

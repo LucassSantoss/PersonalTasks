@@ -18,6 +18,7 @@ class HistoryTaskRvAdapter(
     private val historyList: MutableList<Task>
 ): RecyclerView.Adapter<HistoryTaskRvAdapter.TaskViewHolder>() {
 
+    // ViewHolder que mantém referências das views de cada elemento
     inner class TaskViewHolder(ttb: TileTaskBinding): RecyclerView.ViewHolder(ttb.root) {
         val titleEd: TextView = ttb.titleTv
         val descriptionEd: TextView = ttb.descriptionTv
@@ -26,15 +27,18 @@ class HistoryTaskRvAdapter(
 
         init {
             ttb.root.setOnCreateContextMenuListener { menu, v, menuInfo ->
+                // Configura o menu de context das tasks
                 (onHistoryTaskClickener as AppCompatActivity).menuInflater.inflate(
                     R.menu.context_menu_history, menu
                 )
 
+                // Ação realizada ao clicar em reativar uma task
                 menu.findItem(R.id.reactivate_task_mi).setOnMenuItemClickListener {
                     onHistoryTaskClickener.onReactivateTaskMenuItemClick(adapterPosition)
                     true
                 }
 
+                // Ação realizada ao clicar em detalhar uma task
                 menu.findItem(R.id.detail_task_mi).setOnMenuItemClickListener {
                     onHistoryTaskClickener.onDetailTaskMenuItemClick(adapterPosition)
                     true
@@ -43,6 +47,7 @@ class HistoryTaskRvAdapter(
         }
     }
 
+    // Cria um novo ViewHolder inflando o layout do item
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskViewHolder = TaskViewHolder(
         TileTaskBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -51,6 +56,7 @@ class HistoryTaskRvAdapter(
         )
     )
 
+    // Faz o bind dos dados da posição "position" nas views do ViewHolder
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         historyList[position].let { task ->
             with(holder) {
@@ -70,5 +76,6 @@ class HistoryTaskRvAdapter(
 
     }
 
+    // Retorna a quantidade de itens da lista
     override fun getItemCount(): Int = historyList.size
 }

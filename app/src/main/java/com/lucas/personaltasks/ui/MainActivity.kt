@@ -43,21 +43,27 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
     }
 
     companion object {
+        // Variáveis estáticas usadas para controlar a atualização da lista de tasks
         const val GET_TASKS_MESSAGE = 1
         const val GET_TASKS_INTERVAL = 2000L
     }
 
+    // instância de uma classe anônima que estende a classe Handler
     val getTasksHandler = object: Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
+            // Executado se a mensagem tiver o valor de GET_TASKS_MESSAGE
             if (msg.what == GET_TASKS_MESSAGE) {
                 mainController.getTasks()
+                // Reenvia mensagem com o mesmo código, para que continue atualizando as tasks
                 sendMessageDelayed(
                     obtainMessage().apply {
                         what = GET_TASKS_MESSAGE
                     }, GET_TASKS_INTERVAL
                 )
             } else {
+                // Trata o caso em que as tasks são recebidas após a chamada do historyController
+                // Limpa a lista atual e adiciona as tasks novamente
                 val taskArray = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     msg.data?.getParcelableArray(EXTRA_TASK_ARRAY, Task::class.java)
                 } else {
@@ -122,6 +128,7 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
         )
     }
 
+    // Cria e infla o menu de opções
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true
@@ -136,11 +143,13 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
                 true
             }
             R.id.sign_out_mi -> {
+                // Desloga usuário atual e fecha a tela principal
                 Firebase.auth.signOut()
                 finish()
                 true
             }
             R.id.history_mi -> {
+                // Abre tela de histórico
                 startActivity(Intent(this, HistoryActivity::class.java))
                 true
             }
@@ -160,7 +169,8 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
     }
 
     override fun onRemoveTaskMenuItemClick(position: Int) {
-        // Remove uma task
+        // Altera o status da task por meio do mainController
+        // Será mostrada na tela de histórico
         val task = taskList[position]
         taskList.removeAt(position)
         mainController.removeTask(task)
@@ -189,6 +199,7 @@ class MainActivity : AppCompatActivity(), OnTaskClickListener{
 
     override fun onStart() {
         super.onStart()
+        // Verifica se o usuário está logado
         if (Firebase.auth.currentUser == null) finish()
     }
 }

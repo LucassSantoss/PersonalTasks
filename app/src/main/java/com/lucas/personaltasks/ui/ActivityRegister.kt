@@ -24,29 +24,34 @@ class ActivityRegister : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(arb.root)
 
+        // Configura toolbar
         setSupportActionBar(arb.toolbarIn.toolbar)
         supportActionBar?.title = "Register"
 
         arb.signUpBt.setOnClickListener {
             val signUpCoroutine = CoroutineScope(Dispatchers.IO)
 
+            // Registra um usuário no firebase utilizando nome e senha
             signUpCoroutine.launch {
                 Firebase.auth.createUserWithEmailAndPassword(
                     arb.emailRegisterEt.text.toString(),
                     arb.passwordRegisterEt.text.toString()
                 ).addOnFailureListener {
+                    // Caso dê errado
                     Toast.makeText(
                         this@ActivityRegister,
                         "Registration failed. Cause: ${it.message}",
                         Toast.LENGTH_SHORT
                     ).show()
                 }.addOnSuccessListener {
+                    // Caso dê certo
                     Toast.makeText(
                         this@ActivityRegister,
                         "Registration successful.",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
+                // Finaliza a tela atual
                 finish()
             }
         }
