@@ -54,13 +54,13 @@ class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             // Executado se a mensagem tiver o valor de GET_TASKS_MESSAGE
-            if (msg.what == MainActivity.GET_TASKS_MESSAGE) {
+            if (msg.what == GET_TASKS_MESSAGE) {
                 historyController.getHistoryTasks()
                 // Reenvia mensagem com o mesmo código, para que continue atualizando as tasks
                 sendMessageDelayed(
                     obtainMessage().apply {
-                        what = MainActivity.GET_TASKS_MESSAGE
-                    }, MainActivity.GET_TASKS_INTERVAL
+                        what = GET_TASKS_MESSAGE
+                    }, GET_TASKS_INTERVAL
                 )
             } else {
                 // Trata o caso em que as tasks são recebidas após a chamada do historyController
