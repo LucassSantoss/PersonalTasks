@@ -9,10 +9,7 @@ import android.os.Message
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -24,8 +21,6 @@ import com.lucas.personaltasks.model.Constant.EXTRA_TASK
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK_ARRAY
 import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
 import com.lucas.personaltasks.model.Task
-import com.lucas.personaltasks.model.TaskStatus
-import com.lucas.personaltasks.ui.MainActivity.Companion
 
 class HistoryActivity : AppCompatActivity(), OnHistoryTaskClickener {
     private val ahb: ActivityHistoryBinding by lazy {
