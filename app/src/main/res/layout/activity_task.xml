@@ -55,6 +55,39 @@
                 android:layout_marginTop="8dp"
             />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Priority"
+            />
+
+            <CheckBox
+                android:id="@+id/low_priority_cb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Low"
+            />
+
+            <CheckBox
+                android:id="@+id/mid_priority_cb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mid"
+            />
+
+            <CheckBox
+                android:id="@+id/high_priority_cb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="High"
+            />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="------"
+            />
+
             <CheckBox
                 android:id="@+id/finished_cb"
                 android:layout_width="match_parent"

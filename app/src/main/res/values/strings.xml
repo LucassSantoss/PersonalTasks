@@ -19,4 +19,6 @@
     <string name="sign_out">Sign out</string>
     <string name="reactivate">Reactivate</string>
     <string name="home">Home</string>
+    <string name="priority">Priority:</string>
+    <string name="low">Low</string>
 </resources>

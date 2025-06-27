@@ -61,7 +61,12 @@ class HistoryTaskRvAdapter(
         historyList[position].let { task ->
             with(holder) {
                 val fmt = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-                titleEd.text = task.title
+                if (task.title.isEmpty()) {
+                    titleEd.text = "Empty"
+                } else {
+                    titleEd.text = task.title
+                }
+                titleEd.text = titleEd.text.toString() + " - " + task.priority.toString()
                 var description: String
                 if (task.description.isEmpty()) {
                     description = "Empty"

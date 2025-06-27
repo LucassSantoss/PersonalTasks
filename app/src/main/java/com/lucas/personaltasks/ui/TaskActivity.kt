@@ -4,11 +4,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.SpinnerAdapter
 import androidx.appcompat.app.AppCompatActivity
 import com.lucas.personaltasks.databinding.ActivityTaskBinding
 import com.lucas.personaltasks.model.Task
 import com.lucas.personaltasks.model.Constant.EXTRA_TASK
 import com.lucas.personaltasks.model.Constant.EXTRA_VIEW_TASK
+import com.lucas.personaltasks.model.Priority
 import java.util.Calendar
 import java.util.Date
 
@@ -43,6 +46,7 @@ class TaskActivity: AppCompatActivity() {
                 titleEd.setText(it.title)
                 descriptionEd.setText(it.description)
                 finishedCb.isChecked = it.finished
+                checkActualPriority(acb, it)
 
                 val cal = Calendar.getInstance().apply {
                     timeInMillis = it.limitDateMillis
@@ -62,12 +66,31 @@ class TaskActivity: AppCompatActivity() {
                     datepicker.isEnabled = false
                     finishedCb.isEnabled = false
                     saveBtn.visibility = View.GONE
+                    lowPriorityCb.isEnabled = false
+                    midPriorityCb.isEnabled = false
+                    highPriorityCb.isEnabled = false
                 }
             }
         }
 
         with(acb) {
-            // Configura botão de salvar e de cancelar
+            // Configura botão de salvar, cancelar e prioridades
+
+            lowPriorityCb.setOnClickListener {
+                midPriorityCb.isChecked = false
+                highPriorityCb.isChecked = false
+            }
+
+            midPriorityCb.setOnClickListener {
+                lowPriorityCb.isChecked = false
+                highPriorityCb.isChecked = false
+            }
+
+            highPriorityCb.setOnClickListener {
+                lowPriorityCb.isChecked = false
+                midPriorityCb.isChecked = false
+            }
+
             saveBtn.setOnClickListener {
                 val year: Int = datepicker.year
                 val month: Int = datepicker.month
@@ -83,7 +106,8 @@ class TaskActivity: AppCompatActivity() {
                     title = titleEd.text.toString(),
                     description = descriptionEd.text.toString(),
                     limitDateMillis = dateMillis,
-                    finished = finishedCb.isChecked
+                    finished = finishedCb.isChecked,
+                    priority = getPriority(acb)
                 ).let { task ->
                     Intent().apply {
                         putExtra(EXTRA_TASK, task)
@@ -109,5 +133,31 @@ class TaskActivity: AppCompatActivity() {
         val month = calendar[Calendar.MONTH]
         val day = calendar[Calendar.DAY_OF_MONTH]
         acb.datepicker.updateDate(year, month, day)
+    }
+
+    private fun checkActualPriority(acb: ActivityTaskBinding, task: Task) {
+        with(acb) {
+            if (task.priority == Priority.LOW) {
+                lowPriorityCb.isChecked = true
+                midPriorityCb.isChecked = false
+                highPriorityCb.isChecked = false
+            } else if (task.priority == Priority.MID) {
+                lowPriorityCb.isChecked = false
+                midPriorityCb.isChecked = true
+                highPriorityCb.isChecked = false
+            } else {
+                lowPriorityCb.isChecked = false
+                midPriorityCb.isChecked = false
+                highPriorityCb.isChecked = true
+            }
+        }
+    }
+
+    private fun getPriority(acb: ActivityTaskBinding): Priority {
+        with(acb) {
+            if (lowPriorityCb.isChecked) return Priority.LOW
+            else if (midPriorityCb.isChecked) return Priority.MID
+            else return Priority.HIGH
+        }
     }
 }
